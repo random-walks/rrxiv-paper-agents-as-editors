@@ -1,13 +1,24 @@
 \documentclass{rrxiv}
 \rrxivid{rrxiv:2605.00005}
-\rrxivversion{v3}
+\rrxivversion{v4}
 \rrxivprotocolversion{0.1.0}
 \rrxivlicense{CC-BY-4.0}
 \rrxivtopics{cs.CY,cs.DL}
 \rrxivbuilddate{2026-05-25}
 
 \title{On the editorial role of agents in preprint commentary}
-\author{Blaise Albis-Burdige \and Claude Opus 4.7}
+% Structured authorship (RRP-0021/RRP-0026): mirrors rrxiv-meta.json's
+% authors[] array, including the agent provenance keys.
+\rrxivauthor[orcid=0009-0002-0561-6499, role=author,
+  affiliation={The rrxiv project},
+  email=albisburdige@protonmail.com]{Blaise Albis-Burdige}
+\rrxivauthor[role=agent, is-agent=true, handle={agent:claude-opus-4.7},
+  affiliation={The rrxiv project},
+  model-name={Claude Opus 4.7}, model-vendor=anthropic,
+  model-family=claude, model-series=opus, model-version=4.7,
+  model-release-pin=claude-opus-4-7-20260520,
+  model-release-date=2026-05-20,
+  inference-environment={Claude Code CLI}]{Claude Opus 4.7}
 \date{2026-05-14}
 
 \begin{document}
@@ -55,9 +66,16 @@ Latency was measured wall-clock from corpus ingest to annotation broadcast. The 
 \section{Results: registered claims}
 \label{sec:claims}
 
+% RRP-0030 enrichment (v4): explicit claim typing. The pilot's registered
+% empirical results are encoded on c2 (hallucination split) and c3
+% (latency); the pilot is observational, not a controlled experiment, so
+% those carry evidence=observation. The remaining claims are typed
+% conservatively as argument-backed for this revision — c1's parity
+% reading rides a coarse rubric, c4 is contested, c5's paired comparison
+% and c6's recommendation are typed pending replication artifacts.
 \subsection*{Claim 1: agents match humans on usefulness for retrieval-grounded summaries}
 
-\begin{claim}[Claim 1]
+\begin{claim}[type=theoretical, evidence=argument, confidence=0.6, rationale={Parity read off a coarse 4-point rubric plus a null click-through test; typed conservatively pending replication}, labels={agents, editorial, pilot-study}, title={Usefulness parity on retrieval-grounded summaries}]
 \label{claim:c1}
 Agent-authored summaries achieve 0.78 inter-annotator agreement with human reviewers on a 4-point usefulness scale.
 
@@ -70,7 +88,7 @@ A natural objection is that 4-point usefulness is too coarse a measurement. We a
 
 \subsection*{Claim 2: hallucination rate splits cleanly at the factual/evaluative boundary}
 
-\begin{claim}[Claim 2]
+\begin{claim}[type=empirical, evidence=observation, confidence=0.8, rationale={Six-fold gap robust to rubric perturbations within the pilot; single harness, single corpus, one model generation}, labels={agents, editorial, pilot-study}, models={claude-opus-4.7}, datasets={rrxiv-corpus-1200-paper-sample}, title={Hallucination splits at the factual/evaluative boundary}]
 \label{claim:c2}
 Hallucination rate is 3.1\% on factual claims (citation correctness, numerical values from the paper) but 18.7\% on evaluative claims (significance, novelty).
 
@@ -87,7 +105,7 @@ The 18.7\% figure should not be read as ``agents are unusable for evaluation.'' 
 
 \subsection*{Claim 3: latency drops by two orders of magnitude}
 
-\begin{claim}[Claim 3]
+\begin{claim}[type=empirical, evidence=observation, confidence=0.9, rationale={Order-of-magnitude gap is queue-dominated and insensitive to measurement detail; the human baseline reflects volunteer queue depth rather than active annotation effort}, labels={agents, editorial, pilot-study, latency}, models={claude-opus-4.7}, datasets={rrxiv-corpus-1200-paper-sample}, title={Two-orders-of-magnitude latency reduction}]
 \label{claim:c3}
 Agents reduce time-to-first-annotation from a median 11 days to \textless{}1 hour.
 
@@ -102,7 +120,7 @@ A latency improvement of this size changes downstream behaviour. Readers arrivin
 
 \subsection*{Claim 4: readers cannot distinguish agent and human code-link annotations}
 
-\begin{claim}[Claim 4]
+\begin{claim}[type=theoretical, evidence=argument, confidence=0.4, rationale={Contested: an independent rerun on a different population found a significant human preference; population effects likely dominate any single-sample result}, labels={agents, editorial, reader-study, contested}, title={Reader parity on code-link annotations}]
 \label{claim:c4}
 Readers rate agent code-link annotations on par with human ones (preference test, n=84, p=0.31).
 
@@ -117,7 +135,7 @@ This claim is marked contested. A follow-up by an independent group reran the te
 
 \subsection*{Claim 5: structured output reduces hallucination by 41\%}
 
-\begin{claim}[Claim 5]
+\begin{claim}[type=theoretical, evidence=argument, confidence=0.7, rationale={Within-paper paired comparison on the same corpus; effect direction consistent across annotation types but single harness; typed conservatively for this revision}, labels={agents, editorial, pilot-study, structured-output}, models={claude-opus-4.7}, datasets={rrxiv-corpus-1200-paper-sample}, title={Structured output reduces hallucination}]
 \label{claim:c5}
 Forcing agents to produce structured (CIR-conformant) annotations reduces hallucination by 41\% vs free-form text.
 
@@ -132,10 +150,15 @@ The connection to Claim~2 is direct. The 41\% headline figure is the empirical e
 
 \dependson{rrxiv:2605.00005:claim:c5}{rrxiv:2605.00005:claim:c2}
 \dependson{rrxiv:2605.00005:claim:c5}{rrxiv:2605.00001:claim:queryability}
+% v4: the CIR schema's requirement that every annotation carry a
+% claim-level target id derives from rrxiv:2605.00002's claim-level
+% addressability (see \S\ref{sec:background}); that constraint is partly
+% responsible for the structured-output advantage, so c5 depends on it.
+\dependson{rrxiv:2605.00005:claim:c5}{rrxiv:2605.00002:claim:c1}
 
 \subsection*{Claim 6: retraction flags require human confirmation before broadcast}
 
-\begin{claim}[Claim 6]
+\begin{claim}[type=methodological, evidence=argument, confidence=0.85, rationale={Workflow requirement argued from 3/1200 pilot false positives whose blast radius widens under claim-level retraction; the post-mitigation error rate is untested}, labels={agents, editorial, pilot-study, retraction}, models={claude-opus-4.7}, datasets={rrxiv-corpus-1200-paper-sample}, title={Retraction flags require human confirmation}]
 \label{claim:c6}
 Agent-issued retraction-flag annotations require human confirmation before broadcasting; auto-publishing them caused 3 false-positive flags in our pilot.
 
@@ -150,6 +173,12 @@ The recommended workflow, accordingly, is: agent drafts a retraction-flag annota
 
 \dependson{rrxiv:2605.00005:claim:c6}{rrxiv:2605.00005:claim:c2}
 \dependson{rrxiv:2605.00005:claim:c6}{rrxiv:2605.00007:claim:c1}
+% v4: the blast-radius argument above relies on survivor claims being
+% common in retracted papers — rrxiv:2605.00007's 67% survivor finding.
+\dependson{rrxiv:2605.00005:claim:c6}{rrxiv:2605.00007:claim:c2}
+% v4 enrichment note: no \supports or \contradicts edges added — the
+% pilot's results motivate gating around 00007's retraction machinery
+% rather than providing evidence for or against any sibling claim.
 
 \subsection*{Scope}
 
